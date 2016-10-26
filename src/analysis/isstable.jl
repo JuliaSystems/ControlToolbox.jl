@@ -1,7 +1,7 @@
 
-isstable{S}(s::LtiSystem{S,Continuous{false}}) = maximum(abs([poles(s); 0])) < 1
+isstable{S}(s::LtiSystem{S,Continuous{false}}) = maximum(abs(poles(s))) < 1
 
-isstable{S}(s::LtiSystem{S,Continuous{true}}) = maximum(real([poles(s); 0])) < 0
+isstable{S}(s::LtiSystem{S,Continuous{true}}) = maximum(real(poles(s))) < 0
 
 isstable(s::LtiSystem{Siso{false}}) = map(isstable, getmatrix(s))
 
