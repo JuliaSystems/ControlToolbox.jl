@@ -14,7 +14,7 @@ is returned.
 Discretization methods:
 
 - zero-order-hold     (`:zoh`)
-- first-order-hold    (`:foh`:)
+- first-order-hold    (`:foh`)
 - bilinear transform (`:bilinear` or `:tustin`)
 - forward euler (`:euler`  or `:forward_diff`)
 - backward euler (`:backward_diff`)
@@ -25,24 +25,23 @@ The generalized bilinear transform uses the additional parameter α and is based
 - [1] G. Zhang, X. Chen, and T. Chen, Digital redesign via the generalized
 bilinear transformation, Int. J. Control, vol. 82, no. 4, pp. 741-754, 2009.
 """
-
-# function c2d{S}(s::LtiSystem{S,Continuous{true}}, Ts::Real, method::Symbol=:zoh, α::Real=zero(Float64))
-#   if method == :zoh
-#     return c2dzoh(s, Ts)
-#   elseif method == :foh
-#     return c2dfoh(s, Ts)
-#   elseif method == :bilinear || method == :tustin
-#     return c2dgbt(s, Ts, 0.5)
-#   elseif method == :euler || method == :forward_diff
-#     return c2dforward(s, Ts)
-#   elseif method == :backward_diff
-#     return c2dbackward(s, Ts)
-#   elseif method == :gbt
-#     return c2dgbt(s, Ts, α)
-#   else
-#     error("Unsupported method: ", method)
-#   end
-# end
+function c2d{S}(s::LtiSystem{S,Continuous{true}}, Ts::Real, method::Symbol=:zoh, α::Real=zero(Float64))
+  if method == :zoh
+    return c2dzoh(s, Ts)
+  elseif method == :foh
+    return c2dfoh(s, Ts)
+  elseif method == :bilinear || method == :tustin
+    return c2dgbt(s, Ts, 0.5)
+  elseif method == :euler || method == :forward_diff
+    return c2dforward(s, Ts)
+  elseif method == :backward_diff
+    return c2dbackward(s, Ts)
+  elseif method == :gbt
+    return c2dgbt(s, Ts, α)
+  else
+    error("Unsupported method: ", method)
+  end
+end
 
 # Internal methods
 function c2dzoh{S,T1<:Real}(s::StateSpace{S,Continuous{true}}, Ts::T1)

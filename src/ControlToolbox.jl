@@ -3,6 +3,7 @@ module ControlToolbox
 using ControlCore
 
 import Base: step
+import ControlCore: LtiSystem, StateSpace, Siso, Continuous
 
 export c2d, lsim, step, impulse, isstable, rlocus
 
