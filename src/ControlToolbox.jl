@@ -17,6 +17,8 @@ include("d2c.jl")
 #include("simulation/impulse.jl")
 include("analysis/isstable.jl")
 #include("analysis/rlocus.jl")
+include("analysis/damp.jl")
 include("analysis/dcgain.jl")
+include("analysis/markovparam.jl")
 
 end # module

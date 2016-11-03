@@ -12,6 +12,7 @@ function d2c{S}(s::StateSpace{S,Continuous{false}})
       error("d2c cannot be applied to systems with negative eigenvalues")
     end
   end
+#  @assert ~any(eig(A) .< zero(eltype(A))) "d2c cannot be applied to systems with negative eigenvalues"
   ny, nu = size(s)
   nx = s.nx
   M = logm([A  B; zeros(nu, nx) eye(nu)]) / s.Ts
