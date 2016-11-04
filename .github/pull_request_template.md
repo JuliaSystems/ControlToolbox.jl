@@ -1,6 +1,6 @@
 ### Changes
 
-Short summary of changes:
+Short summary of the changes:
 
 - Change 1. Intuition behind it,
 - Change 2. Intuition behind it,
@@ -8,4 +8,4 @@ Short summary of changes:
 
 ### Reference
 
-Fixes # .
+Fixes #issue_number.
