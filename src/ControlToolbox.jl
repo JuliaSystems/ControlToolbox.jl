@@ -4,6 +4,7 @@ using ControlCore
 using Polynomials
 
 import Base: step
+import Base.LinAlg: BlasFloat
 import ControlCore: LtiSystem, StateSpace, RationalTF, Siso, Continuous
 
 export
@@ -16,21 +17,27 @@ export
   damp,
   dampreport,
   phasemargin,
-  gainmargin
+  gainmargin,
+  care,
+  dare,
+  clyap,
+  dlyap
 
 # using DSP
 
 include("c2d.jl")
 include("d2c.jl")
-#include("simulation/utils.jl")
-#include("simulation/lsim.jl")
-#include("simulation/step.jl")
-#include("simulation/impulse.jl")
 include("analysis/isstable.jl")
 include("analysis/margins.jl")
 #include("analysis/rlocus.jl")
 include("analysis/damp.jl")
 include("analysis/dcgain.jl")
 include("analysis/markovparam.jl")
+include("matrix_comps/riccati.jl")
+include("matrix_comps/lyapunov.jl")
+#include("simulation/utils.jl")
+#include("simulation/lsim.jl")
+#include("simulation/step.jl")
+#include("simulation/impulse.jl")
 
 end # module
