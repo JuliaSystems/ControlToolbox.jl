@@ -21,7 +21,9 @@ export
   care,
   dare,
   clyap,
-  dlyap
+  dlyap,
+  covar,
+  norm
 
 # using DSP
 
@@ -35,6 +37,8 @@ include("analysis/dcgain.jl")
 include("analysis/markovparam.jl")
 include("matrix_comps/riccati.jl")
 include("matrix_comps/lyapunov.jl")
+include("matrix_comps/covar.jl")
+include("matrix_comps/norm.jl")
 #include("simulation/utils.jl")
 #include("simulation/lsim.jl")
 #include("simulation/step.jl")
