@@ -5,7 +5,8 @@ using Polynomials
 
 import Base: step
 import Base.LinAlg: BlasFloat
-import ControlCore: LtiSystem, StateSpace, RationalTF, Siso, Continuous
+import ControlCore: LtiSystem, StateSpace, RationalTF, ZeroPoleGain
+import ControlCore: Siso, Continuous
 
 export
   c2d,
@@ -18,12 +19,14 @@ export
   dampreport,
   phasemargin,
   gainmargin,
+  markovparam,
   care,
   dare,
   clyap,
   dlyap,
   covar,
-  norm
+  norm,
+  gram
 
 # using DSP
 
@@ -39,6 +42,7 @@ include("matrix_comps/riccati.jl")
 include("matrix_comps/lyapunov.jl")
 include("matrix_comps/covar.jl")
 include("matrix_comps/norm.jl")
+include("matrix_comps/gram.jl")
 #include("simulation/utils.jl")
 #include("simulation/lsim.jl")
 #include("simulation/step.jl")

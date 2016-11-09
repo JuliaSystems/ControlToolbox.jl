@@ -29,3 +29,9 @@ function dlyap{T<:BlasFloat}(A::StridedMatrix{T}, Q::StridedMatrix{T})
 end
 dlyap{T1<:Real,T2<:Real}(A::StridedMatrix{T1}, Q::StridedMatrix{T2}) =
   dlyap(float(A), float(Q))
+
+lyap{T<:BlasFloat}(A::StridedMatrix{T}, Q::StridedMatrix{T},::Type{Continuous{true}}) =
+  clyap(A,Q)
+
+lyap{T<:BlasFloat}(A::StridedMatrix{T}, Q::StridedMatrix{T},::Type{Continuous{false}}) =
+  dlyap(A,Q)
