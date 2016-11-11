@@ -1,4 +1,4 @@
-module Disctretization
+module Discretization
 
 abstract Method
 
@@ -128,10 +128,10 @@ Discretization methods:
 
 - zero-order-hold                 (`Discretization.ZOH()`)
 - first-order-hold                (`Discretization.FOH()`)
-- bilinear transform              (`Discretization.Bilinar()`)
+- bilinear transform              (`Discretization.Bilinear()`)
 - forward Euler                   (`Discretization.ForwardEuler()`)
 - backward Euler                  (`Discretization.BackwardEuler()`)
-- generalized bilinear transform  (`Discretization.Bilinar(α::Real)`)
+- generalized bilinear transform  (`Discretization.Bilinear(α::Real)`)
 
 The generalized bilinear transform uses the parameter α and is based on [1].
 
