@@ -28,7 +28,7 @@ end
 immutable FOH <: Method
 end
 
-@compat function (m::FOH)(s::StateSpace{Siso{true}}, Ts::Real)
+@compat function (m::FOH){T}(s::StateSpace{Siso{T}}, Ts::Real)
   A, B, C, D  = s.A, s.B, s.C, s.D
   ny, nu      = size(s)
   nx          = numstates(s)
@@ -42,23 +42,7 @@ end
   Cd    = C
   Dd    = D + C*M2
   x0map = [speye(nx) -M2]
-  ss(Ad, Bd, Cd, Dd[1], Ts), x0map
-end
-@compat function (m::FOH)(s::StateSpace{Siso{false}}, Ts::Real)
-  A, B, C, D  = s.A, s.B, s.C, s.D
-  ny, nu      = size(s)
-  nx          = numstates(s)
-  M     = expm([A*Ts B*Ts zeros(nx, nu);
-          zeros(nu, nx + nu) eye(nu);
-          zeros(nu, nx + 2*nu)])
-  M1    = M[1:nx, nx+1:nx+nu]
-  M2    = M[1:nx, nx+nu+1:nx+2*nu]
-  Ad    = M[1:nx, 1:nx]
-  Bd    = Ad*M2 + M1 - M2
-  Cd    = C
-  Dd    = D + C*M2
-  x0map = [speye(nx) -M2]
-  ss(Ad, Bd, Cd, Dd, Ts), x0map
+  StateSpace{Siso{T}}(Ad, Bd, Cd, Dd, Ts), x0map
 end
 @compat (m::FOH)(s::LtiSystem, Ts::Real) = (m::FOH)(ss(s), Ts)[1]
 
@@ -71,7 +55,7 @@ immutable GeneralizedBilinear{T} <: Method
   end
 end
 
-@compat function (m::GeneralizedBilinear)(s::StateSpace{Siso{true}}, Ts::Real)
+@compat function (m::GeneralizedBilinear){T}(s::StateSpace{Siso{T}}, Ts::Real)
   A, B, C, D  = s.A, s.B, s.C, s.D
   ny, nu      = size(s)
   nx          = numstates(s)
@@ -82,20 +66,7 @@ end
   Cd    = (ima.'\C.').'
   Dd    = D + α*(C*Bd)
   x0map = [speye(nx) zeros(nx, nu)]
-  ss(Ad, Bd, Cd, Dd[1], Ts), x0map
-end
-@compat function (m::GeneralizedBilinear)(s::StateSpace{Siso{false}}, Ts::Real)
-  A, B, C, D  = s.A, s.B, s.C, s.D
-  ny, nu      = size(s)
-  nx          = numstates(s)
-  α           = m.α
-  ima   = speye(nx) - α*Ts*A
-  Ad    = ima\(eye(nx) + (1.0-α)*Ts*A)
-  Bd    = ima\(Ts*B)
-  Cd    = (ima.'\C.').'
-  Dd    = D + α*(C*Bd)
-  x0map = [speye(nx) zeros(nx, nu)]
-  ss(Ad, Bd, Cd, Dd, Ts), x0map
+  StateSpace{Siso{T}}(Ad, Bd, Cd, Dd, Ts), x0map
 end
 @compat (m::GeneralizedBilinear)(s::LtiSystem, Ts::Real) =
   (m::GeneralizedBilinear)(sys(s), Ts)[1]
@@ -104,7 +75,7 @@ end
 immutable ForwardEuler <: Method
 end
 
-@compat function (m::ForwardEuler){T}(s::StateSpace{T,Siso{true}}, Ts::Real)
+@compat function (m::ForwardEuler){T}(s::StateSpace{Siso{T}}, Ts::Real)
   A, B, C, D  = s.A, s.B, s.C, s.D
   ny, nu      = size(s)
   nx          = numstates(s)
@@ -113,13 +84,14 @@ end
   Cd    = C
   Dd    = D
   x0map = [eye(nx) zeros(nx, nu)]
-  Ad, Bd, Cd, Dd, Ts, x0map
+  StateSpace{Siso{T}}(Ad, Bd, Cd, Dd, Ts), x0map
 end
+@compat (m::ForwardEuler)(s::LtiSystem, Ts::Real) = (m::ForwardEuler)(ss(s), Ts)[1]
 
 immutable BackwardEuler <: Method
 end
 
-@compat function (m::BackwardEuler){T}(s::StateSpace{T,Siso{true}}, Ts::Real)
+@compat function (m::BackwardEuler){T}(s::StateSpace{Siso{T}}, Ts::Real)
   A, B, C, D  = s.A, s.B, s.C, s.D
   ny, nu      = size(s)
   nx          = numstates(s)
@@ -129,17 +101,9 @@ end
   Cd    = (ima.'\C.').'
   Dd    = D + C*Bd
   x0map = [eye(nx) zeros(nx, nu)]
-  Ad, Bd, Cd, Dd, Ts, x0map
+  StateSpace{Siso{T}}(Ad, Bd, Cd, Dd, Ts), x0map
 end
-
-# TODO: Discretization.Method implementations for s::LtiSystem
-# TODO: A brainstorming regarding support for any callable objects:
-#       - Do we need to specialize c2d on RationalTF and ZeroPoleGain, as well,
-#         and document the method, accordingly, or,
-#       - Do we just require the method to use s::LtiSystem, no matter what, but
-#         use a type assertion inside c2d such that the return value of the method
-#         is a SISO/MIMO discrete system (whichever is suitable for the function
-#         call)?
+@compat (m::BackwardEuler)(s::LtiSystem, Ts::Real) = (m::BackwardEuler)(ss(s), Ts)[1]
 
 end
 
@@ -178,27 +142,17 @@ The generalized bilinear transform uses the parameter α and is based on [1].
 - [1] G. Zhang, X. Chen, and T. Chen, Digital redesign via the generalized
 bilinear transformation, Int. J. Control, vol. 82, no. 4, pp. 741-754, 2009.
 """
-# function c2d(s::StateSpace{Siso{true},Continuous{true}}, Ts::Real,
-#   method = Discretization.ZOH())
-#   @assert Ts > zero(Ts) && !isinf(Ts) "c2d: Ts must be a positive number"
-#   Ad, Bd, Cd, Dd, Ts, x0map = method(s, Ts)
-#   ss(Ad, Bd, Cd, Dd[1], Ts), x0map
-# end
-#
-# function c2d(s::StateSpace{Siso{false},Continuous{true}}, Ts::Real,
-#   method = Discretization.ZOH())
-#   @assert Ts > zero(Ts) && !isinf(Ts) "c2d: Ts must be a positive number"
-#   Ad, Bd, Cd, Dd, Ts, x0map = method(s, Ts)
-#   ss(Ad, Bd, Cd, Dd, Ts), x0map
-# end
-
+function c2d{T}(s::StateSpace{T,Continuous{true}}, Ts::Real,
+  method = Discretization.ZOH())
+  @assert Ts > zero(Ts) && !isinf(Ts) "c2d: Ts must be a positive number"
+  sys, x0map = method(s, Ts)
+  return sys::StateSpace{T,Continuous{false}}, x0map::AbstractMatrix
+end
 function c2d{T}(s::LtiSystem{T,Continuous{true}}, Ts::Real,
   method = Discretization.ZOH())
   @assert Ts > zero(Ts) && !isinf(Ts) "c2d: Ts must be a positive number"
-  method(s, Ts)[1]::LtiSystem{T,Continuous{false}}
+  method(s, Ts)::LtiSystem{T,Continuous{false}}
 end
-
-#c2d{T}(method::Function, s::StateSpace{T,Continuous{true}}, Ts::Real) = c2d(s, Ts, method)
 c2d{T}(method::Function, s::LtiSystem{T,Continuous{true}}, Ts::Real) = c2d(s, Ts, method)
 
 # Zhai, Guisheng, et al. "An extension of generalized bilinear transformation for digital redesign."
