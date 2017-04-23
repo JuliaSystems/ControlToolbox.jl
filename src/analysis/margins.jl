@@ -6,7 +6,7 @@ frequency for LTI system `sys` or data from bode-plot `mag`, `phase`, `w`.
 By definition, unity gain feedback with phase `pm` would make the closed
 loop system unstable. By default `pm` is given in radians.
 """
-function phasemargin(sys::RationalTF{Siso{true},Continuous{true}}; deg::Bool=false)
+function phasemargin(sys::RationalTF{Val{:siso},Val{:cont}}; deg::Bool=false)
   # For sys = 1/(s+1)^2*(s+10)^2*(s+100)^4/100^4/10 the output from phasemargin is off by a noticable ammount. Haven't been able to replicate or find the problem, might be because of instabilities in roots() though...
 
   Z, P = sys.num[1], sys.den[1]
@@ -27,7 +27,7 @@ function phasemargin(sys::RationalTF{Siso{true},Continuous{true}}; deg::Bool=fal
 end
 
 # For other representations, convert to transfer function
-phasemargin(sys::LtiSystem{Siso{true}}; deg::Bool=false) = phasemargin(tf(sys), deg=deg)
+phasemargin(sys::LtiSystem{Val{:siso}}; deg::Bool=false) = phasemargin(tf(sys), deg=deg)
 
 
 """
@@ -39,7 +39,7 @@ ammount of (pure gain) negative feedback that would make the
 closed loop system unstable. By default the result is given
 in linear units (not dB).
 """
-function gainmargin(sys::RationalTF{Siso{true}}; dB::Bool=false)
+function gainmargin(sys::RationalTF{Val{:siso}}; dB::Bool=false)
   Z, P = sys.num[1], sys.den[1]
 
   # To find w180, first solve imag(sys(jw)) == 0

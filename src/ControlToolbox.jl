@@ -1,12 +1,12 @@
 module ControlToolbox
 
-using ControlCore
+using SystemsBase
 using Polynomials
+using Optim
 
 import Base: step
 import Base.LinAlg: BlasFloat
-import ControlCore: LtiSystem, StateSpace, RationalTF, ZeroPoleGain
-import ControlCore: Siso, Continuous
+import SystemsBase: LtiSystem, StateSpace, RationalTF
 
 export
   c2d,
@@ -26,15 +26,15 @@ export
   dlyap,
   covar,
   norm,
-  gram
-
-# using DSP
+  gram,
+  realjordanform,
+  place
 
 include("c2d.jl")
 include("d2c.jl")
 include("analysis/isstable.jl")
 include("analysis/margins.jl")
-#include("analysis/rlocus.jl")
+include("analysis/rlocus.jl")
 include("analysis/damp.jl")
 include("analysis/dcgain.jl")
 include("analysis/markovparam.jl")
@@ -43,9 +43,11 @@ include("matrix_comps/lyapunov.jl")
 include("matrix_comps/covar.jl")
 include("matrix_comps/norm.jl")
 include("matrix_comps/gram.jl")
-#include("simulation/utils.jl")
+include("matrix_comps/realjordanform.jl")
+include("simulation/utils.jl")
 #include("simulation/lsim.jl")
 #include("simulation/step.jl")
 #include("simulation/impulse.jl")
+include("design/place.jl")
 
 end # module

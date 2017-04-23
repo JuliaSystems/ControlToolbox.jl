@@ -1,9 +1,9 @@
 
-isstable{S}(s::LtiSystem{S,Continuous{false}}) = maximum(abs(poles(s))) < 1
+isstable{S}(s::LtiSystem{S,Val{:disc}}) = maximum(abs(poles(s))) < 1
 
-isstable{S}(s::LtiSystem{S,Continuous{true}}) = maximum(real(poles(s))) < 0
+isstable{S}(s::LtiSystem{S,Val{:cont}}) = maximum(real(poles(s))) < 0
 
-isstable(s::LtiSystem{Siso{false}}) = map(isstable, getmatrix(s))
+isstable(s::LtiSystem{Val{:mimo}}) = map(isstable, getmatrix(s))
 
 # TODO: How to handle pole-zero cancellation
 
