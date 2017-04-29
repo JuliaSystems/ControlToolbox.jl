@@ -1,3 +1,6 @@
 julia 0.4
-ControlCore
+MathProgBase
+Polynomials 0.1.2
+Compat 0.19.0
+SystemsBase
 Compat
