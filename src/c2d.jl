@@ -2,16 +2,18 @@ module Discretization
 
 using Compat
 using SystemsBase
-import SystemsBase: LtiSystem, StateSpace, RationalTF
+using SystemsBase: LtiSystem, StateSpace, RationalTF
 
+# Method abstraction
 abstract Method
 
+# Zero-Order-Hold
 immutable ZOH <: Method
 end
 
-@compat function (m::ZOH){T}(s::StateSpace{Val{T}}, Ts::Real)
-  A, B, C, D  = s.A, s.B, s.C, s.D
-  ny, nu      = size(s)
+@compat function (m::ZOH)(A::AbstractMatrix, B::AbstractMatrix, C::AbstractMatrix,
+  D::AbstractMatrix, Ts::Real)
+  ny, nu      = size(D)
   nx          = size(A,1)
   M     = expm([A*Ts  B*Ts;
           zeros(nu, nx + nu)])
@@ -20,16 +22,28 @@ end
   Cd    = C
   Dd    = D
   x0map = [speye(nx) spzeros(nx, nu)]
+  Ad, Bd, Cd, Dd, Ts, x0map
+end
+@compat function (m::ZOH)(s::StateSpace{Val{:siso},Val{:cont}}, Ts::Real)
+  Ad, Bd, Cd, Dd, Ts, x0map = m(s.A, s.B, s.C, s.D, Ts)
+  ss(Ad, Bd, Cd, Dd[1], Ts), x0map
+end
+@compat function (m::ZOH)(s::StateSpace{Val{:mimo},Val{:cont}}, Ts::Real)
+  Ad, Bd, Cd, Dd, Ts, x0map = m(s.A, s.B, s.C, s.D, Ts)
   ss(Ad, Bd, Cd, Dd, Ts), x0map
 end
-@compat (m::ZOH)(s::LtiSystem, Ts::Real) = (m::ZOH)(ss(s), Ts)[1]
+@compat (m::ZOH){T}(s::RationalTF{Val{T},Val{:cont}}, Ts::Real) =
+  tf(m(ss(s), Ts)[1])
+@compat (m::ZOH){T}(s::LtiSystem{Val{T},Val{:cont}}, Ts::Real)  =
+  m(ss(s), Ts)[1]
 
+# First-Order-Hold
 immutable FOH <: Method
 end
 
-@compat function (m::FOH){T}(s::StateSpace{Val{T}}, Ts::Real)
-  A, B, C, D  = s.A, s.B, s.C, s.D
-  ny, nu      = size(s)
+@compat function (m::FOH)(A::AbstractMatrix, B::AbstractMatrix, C::AbstractMatrix,
+  D::AbstractMatrix, Ts::Real)
+  ny, nu      = size(D)
   nx          = size(A,1)
   M     = expm([A*Ts B*Ts zeros(nx, nu);
           zeros(nu, nx + nu) eye(nu);
@@ -41,22 +55,33 @@ end
   Cd    = C
   Dd    = D + C*M2
   x0map = [speye(nx) -M2]
+  Ad, Bd, Cd, Dd, Ts, x0map
+end
+@compat function (m::FOH)(s::StateSpace{Val{:siso},Val{:cont}}, Ts::Real)
+  Ad, Bd, Cd, Dd, Ts, x0map = m(s.A, s.B, s.C, s.D, Ts)
+  ss(Ad, Bd, Cd, Dd[1], Ts), x0map
+end
+@compat function (m::FOH)(s::StateSpace{Val{:mimo},Val{:cont}}, Ts::Real)
+  Ad, Bd, Cd, Dd, Ts, x0map = m(s.A, s.B, s.C, s.D, Ts)
   ss(Ad, Bd, Cd, Dd, Ts), x0map
 end
-@compat (m::FOH)(s::LtiSystem, Ts::Real) = (m::FOH)(ss(s), Ts)[1]
+@compat (m::FOH){T}(s::RationalTF{Val{T},Val{:cont}}, Ts::Real) =
+  tf(m(ss(s), Ts)[1])
+@compat (m::FOH){T}(s::LtiSystem{Val{T},Val{:cont}}, Ts::Real)  =
+  m(ss(s), Ts)[1]
 
-
-immutable GeneralizedBilinear{T} <: Method
+# Generalized Bilinear Transformation
+immutable Bilinear{T<:Real} <: Method
   α::T
-  @compat function (::Type{GeneralizedBilinear}){T}(α::T = 0.5)
-    @assert α ≥ 0. && α ≤ 1. "GeneralizedBilinear: α must be between 0 and 1"
+  @compat function (::Type{Bilinear}){T}(α::T = 0.5)
+    @assert α ≥ 0. && α ≤ 1. "Bilinear: α must be between 0 and 1"
     new{T}(α)
   end
 end
 
-@compat function (m::GeneralizedBilinear){T}(s::StateSpace{Val{T}}, Ts::Real)
-  A, B, C, D  = s.A, s.B, s.C, s.D
-  ny, nu      = size(s)
+@compat function (m::Bilinear)(A::AbstractMatrix, B::AbstractMatrix,
+  C::AbstractMatrix, D::AbstractMatrix, Ts::Real)
+  ny, nu      = size(D)
   nx          = size(A,1)
   α           = m.α
   ima   = I - α*Ts*A
@@ -64,45 +89,78 @@ end
   Bd    = ima\(Ts*B)
   Cd    = (ima.'\C.').'
   Dd    = D + α*(C*Bd)
-  x0map = [speye(nx) zeros(nx, nu)]
+  x0map = [speye(nx) spzeros(nx, nu)]
+  Ad, Bd, Cd, Dd, Ts, x0map
+end
+@compat function (m::Bilinear)(s::StateSpace{Val{:siso},Val{:cont}}, Ts::Real)
+  Ad, Bd, Cd, Dd, Ts, x0map = m(s.A, s.B, s.C, s.D, Ts)
+  ss(Ad, Bd, Cd, Dd[1], Ts), x0map
+end
+@compat function (m::Bilinear)(s::StateSpace{Val{:mimo},Val{:cont}}, Ts::Real)
+  Ad, Bd, Cd, Dd, Ts, x0map = m(s.A, s.B, s.C, s.D, Ts)
   ss(Ad, Bd, Cd, Dd, Ts), x0map
 end
-@compat (m::GeneralizedBilinear)(s::LtiSystem, Ts::Real) =
-  (m::GeneralizedBilinear)(sys(s), Ts)[1]
+@compat (m::Bilinear){T}(s::RationalTF{Val{T},Val{:cont}}, Ts::Real)  =
+  tf(m(ss(s), Ts)[1])
+@compat (m::Bilinear){T}(s::LtiSystem{Val{T},Val{:cont}}, Ts::Real)   =
+  m(ss(s), Ts)[1]
 
-
+# Forward Euler
 immutable ForwardEuler <: Method
 end
 
-@compat function (m::ForwardEuler){T}(s::StateSpace{Val{T}}, Ts::Real)
-  A, B, C, D  = s.A, s.B, s.C, s.D
-  ny, nu      = size(s)
+@compat function (m::ForwardEuler)(A::AbstractMatrix, B::AbstractMatrix,
+  C::AbstractMatrix, D::AbstractMatrix, Ts::Real)
+  ny, nu      = size(D)
   nx          = size(A,1)
   Ad    = I + Ts*A
   Bd    = Ts*B
   Cd    = C
   Dd    = D
-  x0map = [eye(nx) zeros(nx, nu)]
+  x0map = [speye(nx) spzeros(nx, nu)]
+  Ad, Bd, Cd, Dd, Ts, x0map
+end
+@compat function (m::ForwardEuler)(s::StateSpace{Val{:siso},Val{:cont}}, Ts::Real)
+  Ad, Bd, Cd, Dd, Ts, x0map = m(s.A, s.B, s.C, s.D, Ts)
+  ss(Ad, Bd, Cd, Dd[1], Ts), x0map
+end
+@compat function (m::ForwardEuler)(s::StateSpace{Val{:mimo},Val{:cont}}, Ts::Real)
+  Ad, Bd, Cd, Dd, Ts, x0map = m(s.A, s.B, s.C, s.D, Ts)
   ss(Ad, Bd, Cd, Dd, Ts), x0map
 end
-@compat (m::ForwardEuler)(s::LtiSystem, Ts::Real) = (m::ForwardEuler)(ss(s), Ts)[1]
+@compat (m::ForwardEuler){T}(s::RationalTF{Val{T},Val{:cont}}, Ts::Real)  =
+  tf(m(ss(s), Ts)[1])
+@compat (m::ForwardEuler){T}(s::LtiSystem{Val{T},Val{:cont}}, Ts::Real)   =
+  m(ss(s), Ts)[1]
 
+# Backward Euler
 immutable BackwardEuler <: Method
 end
 
-@compat function (m::BackwardEuler){T}(s::StateSpace{Val{T}}, Ts::Real)
-  A, B, C, D  = s.A, s.B, s.C, s.D
-  ny, nu      = size(s)
+@compat function (m::BackwardEuler)(A::AbstractMatrix, B::AbstractMatrix,
+  C::AbstractMatrix, D::AbstractMatrix, Ts::Real)
+  ny, nu      = size(D)
   nx          = size(A,1)
   ima   = I - Ts*A
   Ad    = ima\eye(nx)
   Bd    = ima\(Ts*B)
   Cd    = (ima.'\C.').'
   Dd    = D + C*Bd
-  x0map = [eye(nx) zeros(nx, nu)]
+  x0map = [speye(nx) spzeros(nx, nu)]
+  Ad, Bd, Cd, Dd, Ts, x0map
+end
+@compat function (m::BackwardEuler)(s::StateSpace{Val{:siso},Val{:cont}}, Ts::Real)
+  Ad, Bd, Cd, Dd, Ts, x0map = m(s, Ts)
+  ss(Ad, Bd, Cd, Dd[1], Ts), x0map
+end
+@compat function (m::BackwardEuler)(s::StateSpace{Val{:mimo},Val{:cont}}, Ts::Real)
+  Ad, Bd, Cd, Dd, Ts, x0map = m(s, Ts)
   ss(Ad, Bd, Cd, Dd, Ts), x0map
 end
-@compat (m::BackwardEuler)(s::LtiSystem, Ts::Real) = (m::BackwardEuler)(ss(s), Ts)[1]
+@compat (m::BackwardEuler){T}(s::RationalTF{Val{T},Val{:cont}}, Ts::Real)  =
+  tf(m(ss(s), Ts)[1])
+@compat (m::BackwardEuler){T}(s::LtiSystem{Val{T},Val{:cont}}, Ts::Real)   =
+  m(ss(s), Ts)[1]
 
 end
 
@@ -153,7 +211,3 @@ function c2d{T}(s::LtiSystem{T,Val{:cont}}, Ts::Real,
   method(s, Ts)::LtiSystem{T,Val{:disc}}
 end
 c2d{T}(method::Function, s::LtiSystem{T,Val{:cont}}, Ts::Real) = c2d(s, Ts, method)
-
-# Zhai, Guisheng, et al. "An extension of generalized bilinear transformation for digital redesign."
-# International Journal of Innovative Computing, Information and Control 8.6 (2012): 4071-4081.
-# http://www.ijicic.org/icmic10-ijicic-03.pdf
