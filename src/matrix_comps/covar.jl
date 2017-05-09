@@ -4,7 +4,7 @@
 Calculate the stationary covariance of an LTI model `sys`, driven by Gaussian
 white noise of covariance `W`
 """
-function covar{S}(sys::StateSpace{S,Continuous{true}}, W::StridedMatrix)
+function covar{S}(sys::StateSpace{S,Val{:cont}}, W::StridedMatrix)
   A, B, C, D = sys.A, sys.B, sys.C, sys.D
   if size(B,2) != size(W, 1) || size(W, 1) != size(W, 2)
     error("W must be a square matrix the same size as `sys.B` columns")
@@ -16,7 +16,7 @@ function covar{S}(sys::StateSpace{S,Continuous{true}}, W::StridedMatrix)
     return C*Q*C'
   end
 end
-function covar{S}(sys::StateSpace{S,Continuous{false}}, W::StridedMatrix)
+function covar{S}(sys::StateSpace{S,Val{:disc}}, W::StridedMatrix)
   A, B, C, D = sys.A, sys.B, sys.C, sys.D
   if size(B,2) != size(W, 1) || size(W, 1) != size(W, 2)
     error("W must be a square matrix the same size as `sys.B` columns")

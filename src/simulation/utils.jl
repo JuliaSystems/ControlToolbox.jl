@@ -1,4 +1,4 @@
-function _default_time_vector(s::ControlCore.LtiSystem, Tf::Real=-1)
+function _default_time_vector(s::LtiSystem, Tf::Real=-1)
   Ts = _default_Ts(s)
   if Tf < zero(Int)
     Tf = 99*Ts
@@ -6,7 +6,7 @@ function _default_time_vector(s::ControlCore.LtiSystem, Tf::Real=-1)
   return 0:Ts:Tf
 end
 
-function _default_Ts(s::ControlCore.LtiSystem)
+function _default_Ts(s::LtiSystem)
   if isdiscrete(s)
     Ts = s.Ts
   elseif !isstable(s)

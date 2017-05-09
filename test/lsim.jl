@@ -1,6 +1,4 @@
 include("../src/ControlToolbox.jl")
-using ControlToolbox
-using ControlCore
 
 A = [[.5,.1] [.1,.5]]
 B = reshape([2,1],2,1)
@@ -12,10 +10,10 @@ u = randn(10,1)
 
 s2 = ss(A,B,C,D)
 s2d = c2d(s2, 0.1)[1]
-s2d = c2d(s2, 0.1, :backward_diff)[1]
-s2d = c2d(s2, 0.1, :forward_diff)[1]
-s2d = c2d(s2, 0.1, :tustin)[1]
-s2d = c2d(s2, 0.1, :foh)[1]
+s2d = c2d(s2, 0.1, Discretization.BackwardEuler())[1]
+s2d = c2d(s2, 0.1, Discretization.ForwardEuler())[1]
+s2d = c2d(s2, 0.1, Discretization.GeneralizedBilinear(0.3))[1]
+s2d = c2d(s2, 0.1, Discretization.FOH())[1]
 
 t = Array(1:length(u))
 (y,x) = lsim(s,u,t)

@@ -4,7 +4,7 @@
 Compute the `p`-norm of the system `sys`. `p` can be either `2` or `Inf`
 (default is 2)
 """
-function norm{S}(sys::StateSpace{S,Continuous{true}}, ::Type{Val{2}})
+function norm{S}(sys::StateSpace{S,Val{:cont}}, ::Type{Val{2}})
   A, B, C, D = sys.A, sys.B, sys.C, sys.D
   if !isstable(sys) || any(D .!= 0)
     return Inf
@@ -13,7 +13,7 @@ function norm{S}(sys::StateSpace{S,Continuous{true}}, ::Type{Val{2}})
     return sqrt(trace(C*Q*C'))
   end
 end
-function norm{S}(sys::StateSpace{S,Continuous{false}}, ::Type{Val{2}})
+function norm{S}(sys::StateSpace{S,Val{:disc}}, ::Type{Val{2}})
   A, B, C, D = sys.A, sys.B, sys.C, sys.D
   if !isstable(sys)
     return Inf

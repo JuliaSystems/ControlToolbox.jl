@@ -5,18 +5,18 @@ Compute the grammian of state-space system `sys`. If `opt` is `:c`, computes the
 controllability grammian. If `opt` is `:o`, computes the observability
 grammian.
 """
-function gram{S,T}(sys::StateSpace{S,Continuous{T}}, ::Type{Val{:c}})
+function gram{S,T}(sys::StateSpace{S,Val{T}}, ::Type{Val{:c}})
   if !isstable(sys)
     error("gram only valid for stable systems")
   else
-    return lyap(sys.A, sys.B*sys.B',Continuous{T})
+    return lyap(sys.A, sys.B*sys.B',Val{T})
   end
 end
-function gram{S,T}(sys::StateSpace{S,Continuous{T}}, ::Type{Val{:o}})
+function gram{S,T}(sys::StateSpace{S,Val{T}}, ::Type{Val{:o}})
   if !isstable(sys)
     error("gram only valid for stable systems")
   else
-    return lyap(sys.A', sys.C'*sys.C,Continuous{T})
+    return lyap(sys.A', sys.C'*sys.C,Val{T})
   end
 end
 function gram{T}(sys::StateSpace, ::Type{Val{T}})

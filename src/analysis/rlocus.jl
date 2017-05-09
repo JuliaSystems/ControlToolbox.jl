@@ -8,7 +8,7 @@ Returns the closed-loop system
 - pole trajectories at evenly spaced intervals of the gain, if `K` is
 omitted
 """
-function rlocus(sys::ControlCore.LtiSystem)
+function rlocus(sys::LtiSystem)
   N::Integer = 100    # Number of points in root locus
 
   K = Vector{Real}(N) # Vector of gains
@@ -31,7 +31,7 @@ function rlocus(sys::ControlCore.LtiSystem)
   return rlocus(sys, K)
 end
 
-function rlocus{T<:Real}(sys::ControlCore.LtiSystem, K::AbstractVector{T})
+function rlocus{T<:Real}(sys::LtiSystem, K::AbstractVector{T})
   plist = Matrix{eltype(poles(sys))}(length(K), length(denvec(sys))-1)
   for idx in eachindex(K)
     plist[idx,:] = rlocus(sys, K[idx])[1]
@@ -39,7 +39,7 @@ function rlocus{T<:Real}(sys::ControlCore.LtiSystem, K::AbstractVector{T})
   (plist, K)
 end
 
-rlocus(sys::ControlCore.LtiSystem, k::Real) = poles(feedback(sys,k)), k
+rlocus(sys::LtiSystem, k::Real) = poles(feedback(sys,k)), k
 
 """
 `max_cplx_distance(C)`

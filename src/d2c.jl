@@ -4,7 +4,7 @@
 Recovers the continuous time which was sampled with a zero-order-hold to obtain
 the discrete time system `s`.
 """
-function d2c{S}(s::StateSpace{S,Continuous{false}})
+function d2c{S}(s::StateSpace{S,Val{:disc}})
   A, B, C, D = s.A, s.B, s.C, s.D
   for λ in eig(A)[1]
     println(λ)
@@ -23,4 +23,4 @@ function d2c{S}(s::StateSpace{S,Continuous{false}})
   ss(Ac, Bc, Cc, Dc)
 end
 
-d2c{S}(s::LtiSystem{S,Continuous{false}}) = d2c(ss(s))
+d2c{S}(s::LtiSystem{S,Val{:disc}}) = d2c(ss(s))
