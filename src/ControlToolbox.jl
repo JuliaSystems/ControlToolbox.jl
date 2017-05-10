@@ -3,10 +3,15 @@ module ControlToolbox
 using SystemsBase
 using Polynomials
 using Optim
+using Compat
 
-import Base: step
+import Base: step, norm
 import Base.LinAlg: BlasFloat
 import SystemsBase: LtiSystem, StateSpace, RationalTF
+import MathProgBase: eval_grad_f, eval_f, eval_g, features_available, initialize
+
+using MathProgBase: loadproblem!, NonlinearModel, setwarmstart!, optimize!
+using MathProgBase: status, AbstractNLPEvaluator, AbstractMathProgSolver
 
 export
   c2d,
@@ -25,9 +30,9 @@ export
   clyap,
   dlyap,
   covar,
-  norm,
   gram,
   realjordanform,
+  Poleplacement,
   place
 
 include("c2d.jl")
