@@ -4,7 +4,7 @@
 Compute the solution `X` to the discrete Lyapunov equation
 `AX + XA' + Q = 0`.
 """
-# TO DO: Change code by SLICOT version
+# TODO: Change code by SLICOT version
 function clyap{T<:BlasFloat}(A::StridedMatrix{T}, Q::StridedMatrix{T})
   lhs = kron(speye(size(A)...), A) + kron(conj(A),speye(size(A)...))
   x = -lhs\reshape(Q, prod(size(Q)), 1)
@@ -20,7 +20,7 @@ clyap{T1<:Real,T2<:Real}(A::StridedMatrix{T1}, Q::StridedMatrix{T2}) =
 Compute the solution `X` to the discrete Lyapunov equation
 `AXA' - X + Q = 0`.
 """
-# TO DO: Change code by SLICOT version
+# TODO: Change code by SLICOT version
 function dlyap{T<:BlasFloat}(A::StridedMatrix{T}, Q::StridedMatrix{T})
   lhs = kron(conj(A), A)
   lhs = speye(size(lhs)...) - lhs

@@ -1,13 +1,16 @@
 module ControlToolbox
 
-using SystemsBase
-using Polynomials
-using Optim
 using Compat
+using Optim
+using Polynomials
+using RationalFunctions
+using RecipesBase
+using SystemsBase
 
 import Base: step, norm
 import Base.LinAlg: BlasFloat
-import SystemsBase: LtiSystem, StateSpace, RationalTF
+import Base: start, next, done
+import SystemsBase: LtiSystem, StateSpace, RationalTF, SystemResponse
 import MathProgBase: eval_grad_f, eval_f, eval_g, features_available, initialize
 
 using MathProgBase: loadproblem!, NonlinearModel, setwarmstart!, optimize!
@@ -19,7 +22,7 @@ export
   step,
   impulse,
   isstable,
-  rlocus,
+  rootlocus,
   damp,
   dampreport,
   phasemargin,
@@ -39,7 +42,7 @@ include("c2d.jl")
 include("d2c.jl")
 include("analysis/isstable.jl")
 include("analysis/margins.jl")
-include("analysis/rlocus.jl")
+include("analysis/rootlocus.jl")
 include("analysis/damp.jl")
 include("analysis/dcgain.jl")
 include("analysis/markovparam.jl")
