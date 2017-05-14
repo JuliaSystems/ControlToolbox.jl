@@ -18,9 +18,7 @@ using MathProgBase: status, AbstractNLPEvaluator, AbstractMathProgSolver
 
 export
   c2d,
-  lsim,
-  step,
-  impulse,
+  Discretization,
   isstable,
   rootlocus,
   damp,
@@ -52,10 +50,6 @@ include("matrix_comps/covar.jl")
 include("matrix_comps/norm.jl")
 include("matrix_comps/gram.jl")
 include("matrix_comps/realjordanform.jl")
-include("simulation/utils.jl")
-#include("simulation/lsim.jl")
-#include("simulation/step.jl")
-#include("simulation/impulse.jl")
 include("design/place.jl")
 
 end # module
