@@ -130,7 +130,7 @@ for (A,B,p,κ,c) in ((A₁,B₁,p₁,κ₁,c₁), (A₂,B₂,p₂,κ₂,c₂), (
                     (A₇,B₇,p₇,κ₇,c₇), (A₈,B₈,p₈,κ₈,c₈), (A₉,B₉,p₉,κ₉,c₉))
   F = place(A, B, p, solver=NLoptSolver(algorithm=:LD_MMA))
   F = place(A, B, p)
-  λ, V = eig(A+B*F)
+  λ, V = eig(A-B*F)
 
   @test cond(V)     < κ
   @test vecnorm(F)  < c
