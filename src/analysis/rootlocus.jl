@@ -31,7 +31,7 @@ type RootLocusResponse{T} <: SystemResponse
            0)
   end
 
-  (rls::RootLocusResponse)(k::Real) = solve(rls.systf.mat[1], -1/k)
+  (rls::RootLocusResponse)(k::Real) = RationalFunctions.solve(rls.systf.mat[1], -1/k)
 end
 
 # Iteration interface
@@ -130,7 +130,7 @@ function rootlocus{S<:Real}(systf::RationalTF{Val{:siso}},
   d0 = max(maxabs(zeros(r)-m0), maxabs(poles(r)-m0))
   if isempty(K)
     k = 1e-4
-    while maximum(norm.(solve(r, -1/k))) < 10d0
+    while maximum(norm.(RationalFunctions.solve(r, -1/k))) < 10d0
       k *= 10
       if k > 1e2
         break
@@ -150,7 +150,7 @@ function rootlocus{S<:Real}(systf::RationalTF{Val{:siso}},
   pvec      = zeros(C, N, nbroots)
   for i in eachindex(K)
     k = K[i]
-    currroots = solve(r, -1/k)
+    currroots = RationalFunctions.solve(r, -1/k)
     nextroots = copy(currroots)
     for j in eachindex(prevroots)
       p        = prevroots[j]

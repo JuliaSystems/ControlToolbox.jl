@@ -73,7 +73,7 @@ function place{S<:Real,U<:Real,V<:Number}(
                   Optim.Options(iterations = iter))
   end
   # transform controller according to the factorization of A
-  K = hcat(zeros(size(d.K,1), d.m), d.K)*d.Qₐ.'
+  K = -hcat(zeros(size(d.K,1), d.m), d.K)*d.Qₐ.'
 end
 
 function place{S<:Real,U<:Real,V<:Number}(
