@@ -61,6 +61,7 @@ next(rls::RootLocusResponse, state) = (state+=1; rls.tloc = state; (rls, state))
   title                 --> "Root locus"
   legend                --> :topright
   grid                  --> true
+  hover                 --> rls.K
 
   # series for root locus line
   @series begin
@@ -126,7 +127,7 @@ function rootlocus{S<:Real}(systf::RationalTF{Val{:siso}},
   r  = systf.mat[1]
   Nr = 100
   m0 = mean(vcat(zeros(r), poles(r)))
-  d0 = max(maximum(norm.(zeros(r)-m0)), maximum(norm.(poles(r)-m0)))
+  d0 = max(maxabs(zeros(r)-m0), maxabs(poles(r)-m0))
   if isempty(K)
     k = 1e-4
     while maximum(norm.(solve(r, -1/k))) < 10d0
