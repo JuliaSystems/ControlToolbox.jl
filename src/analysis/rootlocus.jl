@@ -31,7 +31,12 @@ type RootLocusResponse{T} <: SystemResponse
            0)
   end
 
-  (rls::RootLocusResponse)(k::Real) = RationalFunctions.solve(rls.systf.mat[1], -1/k)
+  @compat function (rls::RootLocusResponse)(k::Real)
+    r = rls.systf.mat[1]
+    nump = num(r)
+    denp = den(r)
+    roots(denp + k*nump)
+  end
 end
 
 # Iteration interface
@@ -61,13 +66,15 @@ next(rls::RootLocusResponse, state) = (state+=1; rls.tloc = state; (rls, state))
   title                 --> "Root locus"
   legend                --> :topright
   grid                  --> true
-  hover                 --> rls.K
 
   # series for root locus line
-  @series begin
-    subplot             :=  1
+  for idx in indices(rls.real_p, 2)
+    @series begin
+      subplot           :=  1
+      hover             --> [@sprintf "(K = %.2f, p = %.2f%+.2f im)" rls.K[k] rls.real_p[k,idx] rls.imag_p[k,idx] for k in eachindex(rls.K)]
 
-    rls.real_p[1:endidx,:], rls.imag_p[1:endidx,:]
+      rls.real_p[1:endidx,idx], rls.imag_p[1:endidx,idx]
+    end
   end
 
   # start pole locations
@@ -125,12 +132,14 @@ end
 function rootlocus{S<:Real}(systf::RationalTF{Val{:siso}},
   K::AbstractVector{S}=Float64[]; N::Int=100)
   r  = systf.mat[1]
+  nump = num(r)
+  denp = den(r)
   Nr = 100
-  m0 = mean(vcat(zeros(r), poles(r)))
+  m0 = mean(vcat(roots(nump), roots(denp)))
   d0 = max(maxabs(zeros(r)-m0), maxabs(poles(r)-m0))
   if isempty(K)
     k = 1e-4
-    while maximum(norm.(RationalFunctions.solve(r, -1/k))) < 10d0
+    while maxabs(roots(denp + k*nump)) < 10d0
       k *= 10
       if k > 1e2
         break
@@ -146,11 +155,11 @@ function rootlocus{S<:Real}(systf::RationalTF{Val{:siso}},
   C = complex(promote_type(eltype(r)..., Float16, eltype(K)))
   # find the rootlocus for N points
   nbroots   = maximum(degree(r))
-  prevroots = poles(r)
+  prevroots = roots(denp)
   pvec      = zeros(C, N, nbroots)
   for i in eachindex(K)
     k = K[i]
-    currroots = RationalFunctions.solve(r, -1/k)
+    currroots = roots(denp + k*nump)
     nextroots = copy(currroots)
     for j in eachindex(prevroots)
       p        = prevroots[j]

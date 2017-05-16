@@ -41,7 +41,7 @@ julia> p = [-1, -2, -1+1im, -1-1im];
 
 julia> K = place(A, B, p);
 
-julia> λ, V = eig(A+B*K);
+julia> λ, V = eig(A-B*K);
 
 julia> λ
 Complex{Float64}[4]
