@@ -104,18 +104,29 @@ next(rls::RootLocusResponse, state) = (state+=1; rls.tloc = state; (rls, state))
 end
 
 """
-    `rootlocus(sys, [K])`
+    `rootlocus(sys, [K])` -> rl
 
-Computes the root locus of `sys`.
+Computes the root locus response `rl` of `sys`.
 
 Returns an object that contains the poles of the closed-loop system
-`feedback(sys, k)`, for `k` in `K`.
-Can also be called with
+`feedback(sys, k)`, for `k` in `K`. The function `rootlocus` can also be
+called with
 
-`rootlocus(nump::Poly, denp::Poly, [K])`,
+    `rootlocus(nump::Poly, denp::Poly, [K])` -> rl
 
 `nump` and `denp` are the numerator and denominator polynomials
 respectively for the open-loop system.
+
+`lr` is a custom data type (`RootLocusResponse`) containing
+
+  * Gains (lr.K) over which the root locus is taken
+  * System (lr.systf) such that the root locus corresponds to the poles of
+    feedback(lr.systf, k)
+  * Real part of poles (lr.real_p)
+  * Imaginary part of poles (lr.real_p)
+
+Plotting recipe is defined for `lr`, which allows for
+`plot(lr; <keyword arguments>)` when `using Plots`.
 
 # Examples
 ```julia
