@@ -1,9 +1,9 @@
 """
-    ctrb(sys) -> C
+    controllability(sys) -> C
 
 Compute the controllability matrix `C` for `sys`, the `StateSpace` system description.
 """
-function ctrb(sys::StateSpace)
+function controllability(sys::StateSpace)
   nx      = numstates(sys)
   ny, nu  = size(sys)
   temp    = zeros(nx, nx*nu)

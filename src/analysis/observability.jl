@@ -1,9 +1,9 @@
 """
-    obsv(sys) -> O
+    observability(sys) -> O
 
 Compute the observability matrix `O` for `sys`, the `StateSpace` system description.
 """
-function obsv(sys::StateSpace)
+function observability(sys::StateSpace)
   nx      = numstates(sys)
   ny, nu  = size(sys)
   temp    = zeros(nx*ny, nx)

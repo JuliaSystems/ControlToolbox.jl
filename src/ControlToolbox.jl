@@ -34,16 +34,21 @@ export
   gram,
   realjordanform,
   Poleplacement,
-  place
+  place,
+  controllability,
+  observability,
+  dcgain
 
 include("c2d.jl")
 include("d2c.jl")
-include("analysis/isstable.jl")
-include("analysis/margins.jl")
-include("analysis/rootlocus.jl")
+include("analysis/controllability.jl")
 include("analysis/damp.jl")
 include("analysis/dcgain.jl")
+include("analysis/isstable.jl")
+include("analysis/margins.jl")
 include("analysis/markovparam.jl")
+include("analysis/observability.jl")
+include("analysis/rootlocus.jl")
 include("matrix_comps/riccati.jl")
 include("matrix_comps/lyapunov.jl")
 include("matrix_comps/covar.jl")
