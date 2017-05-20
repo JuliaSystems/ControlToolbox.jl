@@ -1,6 +1,6 @@
 type RootLocusResponse{T} <: SystemResponse
   K::Vector{T}        # gains
-  systf::RationalTF{Val{:siso}}
+  systf::TransferFunction{Val{:siso}}
   real_p::Matrix{T}   # real part of poles
   imag_p::Matrix{T}   # imaginary part of poles (one row for each k in K)
   real_m0::T          # center
@@ -9,7 +9,7 @@ type RootLocusResponse{T} <: SystemResponse
   tloc::Int
 
   function (::Type{RootLocusResponse}){S<:Real,U<:Real,V<:Real}(
-    K::Vector{S}, systf::RationalTF{Val{:siso}}, real_p::Matrix{U},
+    K::Vector{S}, systf::TransferFunction{Val{:siso}}, real_p::Matrix{U},
     imag_p::Matrix{V}, real_m0::Real, imag_m0::Real, d0::Real)
     if size(real_p) != size(imag_p)
       warn("RootLocusResponse: mag and phase must have same dimensions")
@@ -140,7 +140,7 @@ function rootlocus{S}(sys::LtiSystem{Val{:siso}}, K::AbstractVector{S}=Float64[]
   rootlocus(systf, K; kwargs...)
 end
 
-function rootlocus{S<:Real}(systf::RationalTF{Val{:siso}},
+function rootlocus{S<:Real}(systf::TransferFunction{Val{:siso}},
   K::AbstractVector{S}=Float64[]; N::Int=100)
   r  = systf.mat[1]
   nump = num(r)

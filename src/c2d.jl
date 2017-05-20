@@ -2,7 +2,7 @@ module Discretization
 
 using Compat
 using SystemsBase
-using SystemsBase: LtiSystem, StateSpace, RationalTF
+using SystemsBase: LtiSystem, StateSpace, TransferFunction
 
 # Method abstraction
 abstract Method
@@ -32,7 +32,7 @@ end
   Ad, Bd, Cd, Dd, Ts, x0map = m(s.A, s.B, s.C, s.D, Ts)
   ss(Ad, Bd, Cd, Dd, Ts), x0map
 end
-@compat (m::ZOH){T}(s::RationalTF{Val{T},Val{:cont}}, Ts::Real) =
+@compat (m::ZOH){T}(s::TransferFunction{Val{T},Val{:cont}}, Ts::Real) =
   tf(m(ss(s), Ts)[1])
 @compat (m::ZOH){T}(s::LtiSystem{Val{T},Val{:cont}}, Ts::Real)  =
   m(ss(s), Ts)[1]
@@ -65,7 +65,7 @@ end
   Ad, Bd, Cd, Dd, Ts, x0map = m(s.A, s.B, s.C, s.D, Ts)
   ss(Ad, Bd, Cd, Dd, Ts), x0map
 end
-@compat (m::FOH){T}(s::RationalTF{Val{T},Val{:cont}}, Ts::Real) =
+@compat (m::FOH){T}(s::TransferFunction{Val{T},Val{:cont}}, Ts::Real) =
   tf(m(ss(s), Ts)[1])
 @compat (m::FOH){T}(s::LtiSystem{Val{T},Val{:cont}}, Ts::Real)  =
   m(ss(s), Ts)[1]
@@ -100,7 +100,7 @@ end
   Ad, Bd, Cd, Dd, Ts, x0map = m(s.A, s.B, s.C, s.D, Ts)
   ss(Ad, Bd, Cd, Dd, Ts), x0map
 end
-@compat (m::Bilinear){T}(s::RationalTF{Val{T},Val{:cont}}, Ts::Real)  =
+@compat (m::Bilinear){T}(s::TransferFunction{Val{T},Val{:cont}}, Ts::Real)  =
   tf(m(ss(s), Ts)[1])
 @compat (m::Bilinear){T}(s::LtiSystem{Val{T},Val{:cont}}, Ts::Real)   =
   m(ss(s), Ts)[1]
@@ -128,7 +128,7 @@ end
   Ad, Bd, Cd, Dd, Ts, x0map = m(s.A, s.B, s.C, s.D, Ts)
   ss(Ad, Bd, Cd, Dd, Ts), x0map
 end
-@compat (m::ForwardEuler){T}(s::RationalTF{Val{T},Val{:cont}}, Ts::Real)  =
+@compat (m::ForwardEuler){T}(s::TransferFunction{Val{T},Val{:cont}}, Ts::Real)  =
   tf(m(ss(s), Ts)[1])
 @compat (m::ForwardEuler){T}(s::LtiSystem{Val{T},Val{:cont}}, Ts::Real)   =
   m(ss(s), Ts)[1]
@@ -157,7 +157,7 @@ end
   Ad, Bd, Cd, Dd, Ts, x0map = m(s, Ts)
   ss(Ad, Bd, Cd, Dd, Ts), x0map
 end
-@compat (m::BackwardEuler){T}(s::RationalTF{Val{T},Val{:cont}}, Ts::Real)  =
+@compat (m::BackwardEuler){T}(s::TransferFunction{Val{T},Val{:cont}}, Ts::Real)  =
   tf(m(ss(s), Ts)[1])
 @compat (m::BackwardEuler){T}(s::LtiSystem{Val{T},Val{:cont}}, Ts::Real)   =
   m(ss(s), Ts)[1]

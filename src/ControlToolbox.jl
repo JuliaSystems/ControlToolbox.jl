@@ -10,7 +10,7 @@ using SystemsBase
 import Base: step, norm
 import Base.LinAlg: BlasFloat
 import Base: start, next, done
-import SystemsBase: LtiSystem, StateSpace, RationalTF, SystemResponse
+import SystemsBase: LtiSystem, StateSpace, TransferFunction, SystemResponse
 import MathProgBase: eval_grad_f, eval_f, eval_g, features_available, initialize
 
 using MathProgBase: loadproblem!, NonlinearModel, setwarmstart!, optimize!
