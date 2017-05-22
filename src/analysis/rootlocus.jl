@@ -57,8 +57,8 @@ next(rls::RootLocusResponse, state) = (state+=1; rls.tloc = state; (rls, state))
   layout                :=  (1,1)
   legend                := :none
 
-  xlabel                --> "Real Axis (-)"
-  ylabel                --> "Imaginary Axis (-)"
+  xlabel                --> "Real Axis"
+  ylabel                --> "Imaginary Axis"
   xlims                 --> (min(minimum(rls.real_p), rls.real_m0-1.1rls.d0),
                              max(maximum(rls.real_p), rls.real_m0+1.1rls.d0))
   ylims                 --> (min(minimum(rls.imag_p), rls.imag_m0-1.1rls.d0),

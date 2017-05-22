@@ -197,7 +197,7 @@ Discretization methods:
 The generalized bilinear transform uses the parameter α and is based on [1].
 
 - [1] G. Zhang, X. Chen, and T. Chen, Digital redesign via the generalized
-bilinear transformation, Int. J. Control, vol. 82, no. 4, pp. 741-754, 2009.
+      bilinear transformation, Int. J. Control, vol. 82, no. 4, pp. 741-754, 2009.
 """
 function c2d{T}(s::StateSpace{T,Val{:cont}}, Ts::Real,
   method = Discretization.ZOH())
