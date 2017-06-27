@@ -5,7 +5,7 @@ using SystemsBase
 using SystemsBase: LtiSystem, StateSpace, TransferFunction
 
 # Method abstraction
-abstract Method
+@compat abstract type Method end
 
 # Zero-Order-Hold
 immutable ZOH <: Method
