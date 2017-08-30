@@ -8,7 +8,7 @@ x = Ax + Bu
 at the poles of the vector `p` of desired self-conjugate closed-loop pole
 locations. Computes a gain matrix `K` such that the state feedback `u = –Kx`
 places the closed-loop poles at the locations `p`. In other words, the
-eigenvalues of `A – BK` match the entries of `p` (up to the ordering).
+eigenvalues of `A + BK` match the entries of `p` (up to the ordering).
 Place works for multi-input systems and is based on the algorithm from [1].
 A closed loop pole `pₖ` in `p` that is close enough to an eigenvalue of `A`,
 `λₖ` will not be moved by the feedback. The tolerance is set `|λₖ-pₖ|< rtol`.
@@ -41,7 +41,7 @@ julia> p = [-1, -2, -1+1im, -1-1im];
 
 julia> K = place(A, B, p);
 
-julia> λ, V = eig(A-B*K);
+julia> λ, V = eig(A+B*K);
 
 julia> λ
 Complex{Float64}[4]
@@ -68,12 +68,12 @@ function place{S<:Real,U<:Real,V<:Number}(
     df = OnceDifferentiable(x -> eval_f(d::Poleplacement, x),
                            (x, grad_f) -> eval_grad_f(d::Poleplacement, grad_f, x))
     res = optimize(df,
-                  rand(d.xₚ, length(d.xₚ)),
+                  rand(eltype(d.xₚ), length(d.xₚ)),
                   Optim.BFGS(),
                   Optim.Options(iterations = iter))
   end
   # transform controller according to the factorization of A
-  K = -hcat(zeros(size(d.K,1), d.m), d.K)*d.Qₐ.'
+  K = hcat(zeros(size(d.K,1), d.m), d.K)*d.Qₐ.'
 end
 
 function place{S<:Real,U<:Real,V<:Number}(
