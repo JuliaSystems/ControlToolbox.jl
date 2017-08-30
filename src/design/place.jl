@@ -85,7 +85,7 @@ function place{S<:Real,U<:Real,V<:Number}(
   d = Poleplacement(A, B, p; α=α, rtol=rtol)
 
   if(size(A,1) - d.m  > 0) # if there is something to optimize over
-    G0 = randn(eltype(A), size(A,1), size(B,2)) # random initial point
+    G0 = randn(size(A,1)-d.m, size(B,2)) # random initial point
     n = length(G0)
     l = -Inf*ones(n)
     u = Inf*ones(n)
