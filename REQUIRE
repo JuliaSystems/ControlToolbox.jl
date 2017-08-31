@@ -1,6 +1,4 @@
 julia 0.5
+Compat 0.17.0
+SystemsBase 0.1.0
 MathProgBase
-Polynomials 0.1.2
-Compat 0.26.0
-SystemsBase
-Compat

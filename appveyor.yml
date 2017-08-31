@@ -1,0 +1,50 @@
+environment:
+  matrix:
+    - platform: x86
+      julia: 0.5
+      link: "julialang/bin/winnt/x86/0.5/julia-0.5-latest-win32.exe"
+    - platform: x86
+      julia: 0.6
+      link: "julialang/bin/winnt/x86/0.6/julia-0.6-latest-win32.exe"
+    - platform: x86
+      julia: nightly
+      link: "julianightlies/bin/winnt/x86/julia-latest-win32.exe"
+    - platform: x64
+      julia: 0.5
+      link: "julialang/bin/winnt/x64/0.5/julia-0.5-latest-win64.exe"
+    - platform: x64
+      julia: 0.6
+      link: "julialang/bin/winnt/x64/0.6/julia-0.6-latest-win64.exe"
+    - platform: x64
+      julia: nightly
+      link: "julianightlies/bin/winnt/x64/julia-latest-win64.exe"
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - julia: nightly
+
+notifications:
+  - provider: Email
+    on_build_success: false
+    on_build_failure: false
+    on_build_status_changed: false
+  - provider: Webhook
+    url: https://webhooks.gitter.im/e/5aebe4b836b0d09adc0a
+    on_build_success: true
+    on_build_failure: true
+    on_build_status_changed: true
+
+install:
+  - ps: (new-object net.webclient).DownloadFile(
+        $("http://s3.amazonaws.com/"+$env:link),
+        "C:\projects\julia-binary.exe")
+  - C:\projects\julia-binary.exe /S /D=C:\projects\julia
+
+build_script:
+  - IF EXIST .git\shallow (git fetch --unshallow)
+  - C:\projects\julia\bin\julia -e "versioninfo();
+      Pkg.clone(pwd(), \"ControlToolbox\"); Pkg.build(\"ControlToolbox\")"
+
+test_script:
+  - C:\projects\julia\bin\julia -e "Pkg.test(\"ControlToolbox\")"

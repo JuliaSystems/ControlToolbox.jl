@@ -1,8 +1,12 @@
 language: julia
 
+os:
+  - linux
+  - osx
+
 julia:
-  - 0.4
   - 0.5
+  - 0.6
   - nightly
 
 matrix:
@@ -12,9 +16,15 @@ matrix:
 
 notifications:
   email: false
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/4d251aa5edf2b9cd50b5
+    on_success: change
+    on_failure: change
+    on_start: never
 
 script:
-  - julia -e 'Pkg.clone(pwd())'
+  - julia -e 'Pkg.clone(pwd()); Pkg.build("ControlToolbox")'
   - julia --check-bounds=yes --inline=no -e 'Pkg.test("ControlToolbox",
     coverage=true)'
 

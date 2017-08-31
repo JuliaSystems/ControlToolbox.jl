@@ -23,8 +23,8 @@ should look like (hopefully with a small `Julia` code excerpt), how the **actual
 behaviour** looks like in the current implementation as well as some **proposals**
 and/or **references**, if you can find any, to help solve the issue.
 
-[cc-kanban]: https://github.com/KTH-AC/ControlToolbox.jl/projects/1
-[new-issue]: https://github.com/KTH-AC/ControlToolbox.jl/issues/new
+[cc-kanban]: https://github.com/JuliaSystems/ControlToolbox.jl/projects/1
+[new-issue]: https://github.com/JuliaSystems/ControlToolbox.jl/issues/new
 
 ## Pull Requests
 
@@ -69,8 +69,8 @@ behind them. Using the `Fixes #issue_number.` in the end is useful to close the
 corresponding issue automatically upon a successful merge.
 
 [conv-devel]: https://youtu.be/iV7mVGPXrxU?t=16m25s
-[cc-fork]: https://github.com/KTH-AC/ControlToolbox.jl/fork
-[cc-pull]: https://github.com/KTH-AC/ControlToolbox.jl/pull/new/master
+[cc-fork]: https://github.com/JuliaSystems/ControlToolbox.jl/fork
+[cc-pull]: https://github.com/JuliaSystems/ControlToolbox.jl/pull/new/master
 
 ### Documentation Enhancements
 
@@ -100,6 +100,6 @@ statement in your commit message to disable testing.
 Instead of enhancing documentation in `ControlToolbox`, you might be willing to
 create a tutorial showcasing the use of `Julia` and `ControlToolbox` in control
 systems identification and analysis applications. In this case, you are more than
-welcome to contribute to our [tutorials repository][kth-ctj].
+welcome to contribute to our [tutorials repository][js-ctj].
 
-[kth-ctj]: https://github.com/KTH-AC/CTJ.git
+[js-ctj]: https://github.com/JuliaSystems/CTJ.git
