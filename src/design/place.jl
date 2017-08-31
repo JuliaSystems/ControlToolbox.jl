@@ -147,7 +147,7 @@ type Poleplacement{T,M} <: AbstractNLPEvaluator
     end
 
     m = sum(select) # number of eigenvalues not moved
-    p = p[!select]
+    p = p[broadcast(!,select)]
     Ã = realjordanform(p)
 
     # move eigenvalues to be moved to the lower right corner of the real schur
@@ -165,7 +165,7 @@ type Poleplacement{T,M} <: AbstractNLPEvaluator
     xₚ = randn(T,length(G))
     X  = eye(T,size(A₃,1))
     Xᵢ = eye(T,size(A₃,1))
-    K  = zeros(T,G*Xᵢ)
+    K  = zeros(T, size(G*Xᵢ))
 
     new{T,typeof(X)}(K, A₃, B₂, Ã, α, xₚ, X, Xᵢ, m, Qₐ)
   end
@@ -197,7 +197,7 @@ features_available(d::Poleplacement) = [:Grad]
 
 function eval_f(d::Poleplacement, x)
   common_first_sylvester!(d, x)
-  d.α*(sumabs2(d.X) + sumabs2(d.Xᵢ))/2 + (1-d.α)*sumabs2(d.K)/2
+  d.α*(sum(abs2, d.X) + sum(abs2, d.Xᵢ))/2 + (1-d.α)*sum(abs2, d.K)/2
 end
 
 eval_g(d::Poleplacement, g, x) = nothing
