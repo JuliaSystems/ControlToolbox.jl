@@ -5,12 +5,12 @@ using Optim
 using Polynomials
 using RationalFunctions
 using RecipesBase
-using SystemsBase
+using LTISystems
 
 import Base: step, norm
 import Base.LinAlg: BlasFloat
 import Base: start, next, done
-import SystemsBase: LtiSystem, StateSpace, TransferFunction, SystemResponse
+import LTISystems: LtiSystem, StateSpace, TransferFunction, SystemResponse
 import MathProgBase: eval_grad_f, eval_f, eval_g, features_available, initialize
 
 using MathProgBase: loadproblem!, NonlinearModel, setwarmstart!, optimize!

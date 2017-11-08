@@ -1,1 +1,1 @@
-dcgain(sys::SystemsBase.LtiSystem) = map(real, sys(ω = 0.))
+dcgain(sys::LTISystems.LtiSystem) = map(real, sys(ω = 0.))

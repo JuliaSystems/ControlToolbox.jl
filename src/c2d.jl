@@ -1,8 +1,8 @@
 module Discretization
 
 using Compat
-using SystemsBase
-using SystemsBase: LtiSystem, StateSpace, TransferFunction
+using LTISystems
+using LTISystems: LtiSystem, StateSpace, TransferFunction
 
 # Method abstraction
 @compat abstract type Method end
